@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Progress from "./pages/Progress";
+import LessonDetail from "./pages/LessonDetail";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminContent from "./pages/admin/AdminContent";
@@ -40,7 +41,8 @@ const App = () => (
                   <Route index element={<Dashboard />} />
                   <Route path="courses" element={<Courses />} />
                   <Route path="progress" element={<Progress />} />
-                  <Route path="lessons" element={<Dashboard />} />
+                  <Route path="lessons" element={<Courses />} />
+                  <Route path="lessons/:id" element={<LessonDetail />} />
                   <Route path="settings" element={<Dashboard />} />
                 </Route>
                 
