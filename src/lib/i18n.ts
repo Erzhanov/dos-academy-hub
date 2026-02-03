@@ -56,6 +56,9 @@ export const translations = {
       notStarted: 'Басталмаған',
       duration: 'Ұзақтығы',
       progress: 'Прогресс',
+      startLearning: 'Оқуды бастау',
+      courseContent: 'Курс мазмұны',
+      hasHomework: 'Үй жұмысы бар',
     },
     // Lessons
     lessons: {
@@ -184,6 +187,9 @@ export const translations = {
       notStarted: 'Не начат',
       duration: 'Длительность',
       progress: 'Прогресс',
+      startLearning: 'Начать обучение',
+      courseContent: 'Содержание курса',
+      hasHomework: 'Есть домашнее задание',
     },
     // Lessons
     lessons: {

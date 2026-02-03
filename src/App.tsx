@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Progress from "./pages/Progress";
 import LessonDetail from "./pages/LessonDetail";
+import CourseDetail from "./pages/CourseDetail";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminContent from "./pages/admin/AdminContent";
@@ -40,6 +41,7 @@ const App = () => (
                 <Route path="/app" element={<AppLayout />}>
                   <Route index element={<Dashboard />} />
                   <Route path="courses" element={<Courses />} />
+                  <Route path="courses/:id" element={<CourseDetail />} />
                   <Route path="progress" element={<Progress />} />
                   <Route path="lessons" element={<Courses />} />
                   <Route path="lessons/:id" element={<LessonDetail />} />
