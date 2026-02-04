@@ -1,61 +1,27 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourses } from '@/hooks/useCourses';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { CourseCard } from '@/components/courses/CourseCard';
-import { BookOpen, CheckCircle, Clock, TrendingUp } from 'lucide-react';
-
-// Mock data - in production this would come from Supabase
-const MOCK_COURSES = [
-  {
-    id: '1',
-    title: 'Python негіздері',
-    description: 'Python бағдарламалау тілін нөлден үйреніңіз. Синтаксис, деректер типтері және негізгі құрылымдар.',
-    category: 'Бағдарламалау',
-    level: 'beginner' as const,
-    lessonsCount: 24,
-    completedLessons: 18,
-    duration: '12 сағ',
-  },
-  {
-    id: '2',
-    title: 'Web-әзірлеу: HTML/CSS',
-    description: 'Веб-сайттар құруды үйреніңіз. HTML тегтері, CSS стильдері және респонсив дизайн.',
-    category: 'Web Development',
-    level: 'beginner' as const,
-    lessonsCount: 20,
-    completedLessons: 20,
-    duration: '10 сағ',
-  },
-  {
-    id: '3',
-    title: 'JavaScript Advanced',
-    description: 'JavaScript тілінің advanced тақырыптары: async/await, promises, modules.',
-    category: 'Web Development',
-    level: 'advanced' as const,
-    lessonsCount: 30,
-    completedLessons: 5,
-    duration: '15 сағ',
-  },
-  {
-    id: '4',
-    title: 'React негіздері',
-    description: 'React кітапханасымен қосымшалар құру. Components, hooks, state management.',
-    category: 'Frontend',
-    level: 'intermediate' as const,
-    lessonsCount: 28,
-    completedLessons: 0,
-    duration: '14 сағ',
-  },
-];
+import { BookOpen, CheckCircle, Clock, TrendingUp, Loader2 } from 'lucide-react';
 
 export default function Dashboard() {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { data: courses = [], isLoading } = useCourses();
 
-  const totalLessons = MOCK_COURSES.reduce((acc, c) => acc + c.lessonsCount, 0);
-  const completedLessons = MOCK_COURSES.reduce((acc, c) => acc + c.completedLessons, 0);
-  const inProgressCourses = MOCK_COURSES.filter(c => c.completedLessons > 0 && c.completedLessons < c.lessonsCount).length;
-  const completedCourses = MOCK_COURSES.filter(c => c.completedLessons === c.lessonsCount).length;
+  const totalLessons = courses.reduce((acc, c) => acc + c.lessons_count, 0);
+  const completedLessons = courses.reduce((acc, c) => acc + c.completed_lessons, 0);
+  const inProgressCourses = courses.filter(c => c.completed_lessons > 0 && c.completed_lessons < c.lessons_count).length;
+  const completedCourses = courses.filter(c => c.completed_lessons === c.lessons_count && c.lessons_count > 0).length;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -90,7 +56,7 @@ export default function Dashboard() {
           title={t.dashboard.completedLessons}
           value={completedLessons}
           icon={TrendingUp}
-          trend={{ value: 12, isPositive: true }}
+          trend={totalLessons > 0 ? { value: Math.round((completedLessons / totalLessons) * 100), isPositive: true } : undefined}
         />
       </div>
 
@@ -108,11 +74,28 @@ export default function Dashboard() {
           </a>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {MOCK_COURSES.map((course) => (
-            <CourseCard key={course.id} {...course} />
-          ))}
-        </div>
+        {courses.length > 0 ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {courses.slice(0, 4).map((course) => (
+              <CourseCard 
+                key={course.id} 
+                id={course.id}
+                title={course.title}
+                description={course.description || ''}
+                category={course.category_name || ''}
+                level={course.level}
+                lessonsCount={course.lessons_count}
+                completedLessons={course.completed_lessons}
+                duration={course.duration || ''}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="card-elevated p-8 text-center">
+            <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">No courses available yet.</p>
+          </div>
+        )}
       </section>
     </div>
   );
