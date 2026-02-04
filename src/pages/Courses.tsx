@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CourseCard } from '@/components/courses/CourseCard';
+import { useCourses, useCategories } from '@/hooks/useCourses';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,95 +11,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Filter, X } from 'lucide-react';
-
-// Mock data
-const MOCK_COURSES = [
-  {
-    id: '1',
-    title: 'Python негіздері',
-    description: 'Python бағдарламалау тілін нөлден үйреніңіз.',
-    category: 'Бағдарламалау',
-    level: 'beginner' as const,
-    lessonsCount: 24,
-    completedLessons: 18,
-    duration: '12 сағ',
-  },
-  {
-    id: '2',
-    title: 'Web-әзірлеу: HTML/CSS',
-    description: 'Веб-сайттар құруды үйреніңіз.',
-    category: 'Web Development',
-    level: 'beginner' as const,
-    lessonsCount: 20,
-    completedLessons: 20,
-    duration: '10 сағ',
-  },
-  {
-    id: '3',
-    title: 'JavaScript Advanced',
-    description: 'JavaScript тілінің advanced тақырыптары.',
-    category: 'Web Development',
-    level: 'advanced' as const,
-    lessonsCount: 30,
-    completedLessons: 5,
-    duration: '15 сағ',
-  },
-  {
-    id: '4',
-    title: 'React негіздері',
-    description: 'React кітапханасымен қосымшалар құру.',
-    category: 'Frontend',
-    level: 'intermediate' as const,
-    lessonsCount: 28,
-    completedLessons: 0,
-    duration: '14 сағ',
-  },
-  {
-    id: '5',
-    title: 'Node.js Backend',
-    description: 'Backend әзірлеуді Node.js арқылы үйреніңіз.',
-    category: 'Backend',
-    level: 'intermediate' as const,
-    lessonsCount: 32,
-    completedLessons: 10,
-    duration: '16 сағ',
-  },
-  {
-    id: '6',
-    title: 'SQL және деректер қоры',
-    description: 'SQL тілі және PostgreSQL деректер қорымен жұмыс.',
-    category: 'Database',
-    level: 'beginner' as const,
-    lessonsCount: 18,
-    completedLessons: 0,
-    duration: '9 сағ',
-  },
-];
-
-const CATEGORIES = ['Барлығы', 'Бағдарламалау', 'Web Development', 'Frontend', 'Backend', 'Database'];
+import { Search, Filter, X, Loader2 } from 'lucide-react';
 
 export default function Courses() {
   const { t } = useLanguage();
+  const { data: courses = [], isLoading, error } = useCourses();
+  const { data: categories = [] } = useCategories();
+  
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [level, setLevel] = useState('all');
   const [status, setStatus] = useState('all');
 
-  const filteredCourses = MOCK_COURSES.filter((course) => {
+  const filteredCourses = courses.filter((course) => {
     const matchesSearch = course.title.toLowerCase().includes(search.toLowerCase()) ||
-      course.description.toLowerCase().includes(search.toLowerCase());
+      (course.description?.toLowerCase().includes(search.toLowerCase()) ?? false);
     
-    const matchesCategory = category === 'all' || course.category === category;
+    const matchesCategory = category === 'all' || course.category_name === category;
     const matchesLevel = level === 'all' || course.level === level;
     
     let matchesStatus = true;
     if (status === 'completed') {
-      matchesStatus = course.completedLessons === course.lessonsCount;
+      matchesStatus = course.completed_lessons === course.lessons_count && course.lessons_count > 0;
     } else if (status === 'in_progress') {
-      matchesStatus = course.completedLessons > 0 && course.completedLessons < course.lessonsCount;
+      matchesStatus = course.completed_lessons > 0 && course.completed_lessons < course.lessons_count;
     } else if (status === 'not_started') {
-      matchesStatus = course.completedLessons === 0;
+      matchesStatus = course.completed_lessons === 0;
     }
 
     return matchesSearch && matchesCategory && matchesLevel && matchesStatus;
@@ -112,6 +50,22 @@ export default function Courses() {
   };
 
   const hasActiveFilters = search || category !== 'all' || level !== 'all' || status !== 'all';
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-destructive">{t.common.error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -146,8 +100,8 @@ export default function Courses() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t.filters.all}</SelectItem>
-              {CATEGORIES.slice(1).map((cat) => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -189,7 +143,17 @@ export default function Courses() {
       {/* Courses Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredCourses.map((course) => (
-          <CourseCard key={course.id} {...course} />
+          <CourseCard 
+            key={course.id} 
+            id={course.id}
+            title={course.title}
+            description={course.description || ''}
+            category={course.category_name || ''}
+            level={course.level}
+            lessonsCount={course.lessons_count}
+            completedLessons={course.completed_lessons}
+            duration={course.duration || ''}
+          />
         ))}
       </div>
 
