@@ -45,14 +45,16 @@ export default function LessonDetail() {
   const completedCount = moduleLessons.filter(l => l.is_completed).length;
   const progressPercent = moduleLessons.length > 0 ? (completedCount / moduleLessons.length) * 100 : 0;
 
-  const handleMarkComplete = async () => {
+  const handleToggleComplete = async () => {
     if (!lesson || !user) return;
     
+    const newCompleted = !lesson.is_completed;
+    
     try {
-      await toggleProgress.mutateAsync({ lessonId: lesson.id, completed: true });
+      await toggleProgress.mutateAsync({ lessonId: lesson.id, completed: newCompleted });
       toast({
-        title: t.courses.completed,
-        description: `"${lesson.title}" ${t.lessons.markComplete.toLowerCase()}`,
+        title: newCompleted ? t.courses.completed : t.courses.inProgress,
+        description: `"${lesson.title}" ${newCompleted ? t.lessons.markComplete.toLowerCase() : ''}`,
       });
     } catch (error) {
       toast({
@@ -170,20 +172,19 @@ export default function LessonDetail() {
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
-                {!lesson.is_completed && (
-                  <Button 
-                    onClick={handleMarkComplete} 
-                    className="gap-2"
-                    disabled={toggleProgress.isPending}
-                  >
-                    {toggleProgress.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <CheckCircle className="w-4 h-4" />
-                    )}
-                    {t.lessons.markComplete}
-                  </Button>
-                )}
+                <Button 
+                  onClick={handleToggleComplete} 
+                  variant={lesson.is_completed ? "outline" : "default"}
+                  className="gap-2"
+                  disabled={toggleProgress.isPending}
+                >
+                  {toggleProgress.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4" />
+                  )}
+                  {lesson.is_completed ? t.courses.completed : t.lessons.markComplete}
+                </Button>
                 
                 {lesson.has_homework && (
                   <Button variant="outline" onClick={handleDownloadHomework} className="gap-2">
