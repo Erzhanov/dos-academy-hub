@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,9 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { useLesson, useModuleLessons } from '@/hooks/useLesson';
+import { useToggleLessonProgress } from '@/hooks/useProgress';
 import { 
-  Play, 
   CheckCircle, 
   Download, 
   ChevronLeft, 
@@ -17,66 +18,9 @@ import {
   Clock,
   BookOpen,
   FileText,
-  Lock
+  Lock,
+  Loader2
 } from 'lucide-react';
-
-// Mock data for lesson
-const MOCK_LESSONS = [
-  {
-    id: '1',
-    title: 'Python кіріспе',
-    description: 'Python бағдарламалау тіліне кіріспе. Негізгі түсініктер мен орнату процесі.',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    homeworkUrl: '/homework/lesson-1.pdf',
-    duration: '15:30',
-    moduleId: '1',
-    moduleTitle: '1-Модуль: Негіздер',
-    courseId: '1',
-    courseTitle: 'Python негіздері',
-    orderIndex: 1,
-    isPublished: true,
-    isCompleted: false,
-  },
-  {
-    id: '2',
-    title: 'Айнымалылар және деректер типтері',
-    description: 'Python-дағы негізгі деректер типтері: string, int, float, boolean. Айнымалыларды жариялау.',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    homeworkUrl: '/homework/lesson-2.pdf',
-    duration: '22:45',
-    moduleId: '1',
-    moduleTitle: '1-Модуль: Негіздер',
-    courseId: '1',
-    courseTitle: 'Python негіздері',
-    orderIndex: 2,
-    isPublished: true,
-    isCompleted: true,
-  },
-  {
-    id: '3',
-    title: 'Шарт операторлары',
-    description: 'If, elif, else операторлары. Логикалық өрнектер мен салыстыру операторлары.',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    homeworkUrl: null,
-    duration: '18:20',
-    moduleId: '1',
-    moduleTitle: '1-Модуль: Негіздер',
-    courseId: '1',
-    courseTitle: 'Python негіздері',
-    orderIndex: 3,
-    isPublished: true,
-    isCompleted: false,
-  },
-];
-
-// Mock module lessons for navigation
-const MODULE_LESSONS = [
-  { id: '1', title: 'Python кіріспе', isCompleted: false, orderIndex: 1 },
-  { id: '2', title: 'Айнымалылар және деректер типтері', isCompleted: true, orderIndex: 2 },
-  { id: '3', title: 'Шарт операторлары', isCompleted: false, orderIndex: 3 },
-  { id: '4', title: 'Циклдар', isCompleted: false, orderIndex: 4 },
-  { id: '5', title: 'Функциялар', isCompleted: false, orderIndex: 5 },
-];
 
 export default function LessonDetail() {
   const { id } = useParams<{ id: string }>();
@@ -85,38 +29,75 @@ export default function LessonDetail() {
   const { user } = useAuth();
   const { toast } = useToast();
   
-  // Find current lesson
-  const lesson = MOCK_LESSONS.find(l => l.id === id) || MOCK_LESSONS[0];
-  const [isCompleted, setIsCompleted] = useState(lesson.isCompleted);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  // Fetch lesson data
+  const { data: lesson, isLoading: isLoadingLesson, error: lessonError } = useLesson(id);
+  const { data: moduleLessons = [], isLoading: isLoadingModuleLessons } = useModuleLessons(lesson?.module_id);
   
-  // Find current index in module
-  const currentIndex = MODULE_LESSONS.findIndex(l => l.id === id);
-  const prevLesson = currentIndex > 0 ? MODULE_LESSONS[currentIndex - 1] : null;
-  const nextLesson = currentIndex < MODULE_LESSONS.length - 1 ? MODULE_LESSONS[currentIndex + 1] : null;
+  // Progress mutation
+  const toggleProgress = useToggleLessonProgress();
+  
+  // Find navigation lessons
+  const currentIndex = moduleLessons.findIndex(l => l.id === id);
+  const prevLesson = currentIndex > 0 ? moduleLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < moduleLessons.length - 1 ? moduleLessons[currentIndex + 1] : null;
   
   // Calculate module progress
-  const completedCount = MODULE_LESSONS.filter(l => l.isCompleted || l.id === id && isCompleted).length;
-  const progressPercent = (completedCount / MODULE_LESSONS.length) * 100;
+  const completedCount = moduleLessons.filter(l => l.is_completed).length;
+  const progressPercent = moduleLessons.length > 0 ? (completedCount / moduleLessons.length) * 100 : 0;
 
-  const handleMarkComplete = () => {
-    setIsCompleted(true);
-    toast({
-      title: t.courses.completed,
-      description: `"${lesson.title}" ${t.lessons.markComplete.toLowerCase()}`,
-    });
-    // In production, this would call the API to save progress
-  };
-
-  const handleDownloadHomework = () => {
-    if (lesson.homeworkUrl) {
-      // In production, this would trigger actual download
+  const handleMarkComplete = async () => {
+    if (!lesson || !user) return;
+    
+    try {
+      await toggleProgress.mutateAsync({ lessonId: lesson.id, completed: true });
       toast({
-        title: t.lessons.downloadHomework,
-        description: 'Файл жүктелуде...',
+        title: t.courses.completed,
+        description: `"${lesson.title}" ${t.lessons.markComplete.toLowerCase()}`,
+      });
+    } catch (error) {
+      toast({
+        title: t.common.error,
+        description: String(error),
+        variant: 'destructive',
       });
     }
   };
+
+  const handleDownloadHomework = () => {
+    // In production, this would trigger actual download from storage
+    toast({
+      title: t.lessons.downloadHomework,
+      description: 'Файл жүктелуде...',
+    });
+  };
+
+  // Loading state
+  if (isLoadingLesson) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <Skeleton className="h-6 w-96" />
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <Skeleton className="aspect-video w-full" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-80 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (lessonError || !lesson) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 space-y-4">
+        <p className="text-muted-foreground">{t.common.error}</p>
+        <Button onClick={() => navigate('/app/courses')}>{t.common.back}</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -126,8 +107,8 @@ export default function LessonDetail() {
           {t.nav.courses}
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <Link to={`/app/courses/${lesson.courseId}`} className="hover:text-foreground transition-colors">
-          {lesson.courseTitle}
+        <Link to={`/app/courses/${lesson.course_id}`} className="hover:text-foreground transition-colors">
+          {lesson.course_title}
         </Link>
         <ChevronRight className="w-4 h-4" />
         <span className="text-foreground">{lesson.title}</span>
@@ -139,9 +120,9 @@ export default function LessonDetail() {
           {/* Video Player */}
           <Card className="overflow-hidden">
             <AspectRatio ratio={16 / 9} className="bg-muted">
-              {lesson.videoUrl ? (
+              {lesson.video_url ? (
                 <iframe
-                  src={lesson.videoUrl}
+                  src={lesson.video_url}
                   title={lesson.title}
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -164,8 +145,8 @@ export default function LessonDetail() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">{lesson.moduleTitle}</Badge>
-                    {isCompleted && (
+                    <Badge variant="outline">{`${lesson.module_order_index + 1}-Модуль: ${lesson.module_title}`}</Badge>
+                    {lesson.is_completed && (
                       <Badge variant="secondary" className="border">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         {t.courses.completed}
@@ -174,25 +155,37 @@ export default function LessonDetail() {
                   </div>
                   <CardTitle className="text-xl md:text-2xl">{lesson.title}</CardTitle>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="w-4 h-4" />
-                  <span>{lesson.duration}</span>
-                </div>
+                {lesson.duration && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4" />
+                    <span>{lesson.duration}</span>
+                  </div>
+                )}
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <p className="text-muted-foreground">{lesson.description}</p>
+              {lesson.description && (
+                <p className="text-muted-foreground">{lesson.description}</p>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
-                {!isCompleted && (
-                  <Button onClick={handleMarkComplete} className="gap-2">
-                    <CheckCircle className="w-4 h-4" />
+                {!lesson.is_completed && (
+                  <Button 
+                    onClick={handleMarkComplete} 
+                    className="gap-2"
+                    disabled={toggleProgress.isPending}
+                  >
+                    {toggleProgress.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4" />
+                    )}
                     {t.lessons.markComplete}
                   </Button>
                 )}
                 
-                {lesson.homeworkUrl && (
+                {lesson.has_homework && (
                   <Button variant="outline" onClick={handleDownloadHomework} className="gap-2">
                     <Download className="w-4 h-4" />
                     {t.lessons.downloadHomework}
@@ -226,7 +219,7 @@ export default function LessonDetail() {
                 <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
-              <Button onClick={() => navigate(`/app/courses/${lesson.courseId}`)} className="gap-2">
+              <Button onClick={() => navigate(`/app/courses/${lesson.course_id}`)} className="gap-2">
                 {t.common.back}
               </Button>
             )}
@@ -239,59 +232,66 @@ export default function LessonDetail() {
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <BookOpen className="w-5 h-5" />
-                {lesson.moduleTitle}
+                {`${lesson.module_order_index + 1}-Модуль: ${lesson.module_title}`}
               </CardTitle>
               <div className="pt-2">
                 <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                   <span>{t.courses.progress}</span>
-                  <span>{completedCount}/{MODULE_LESSONS.length}</span>
+                  <span>{completedCount}/{moduleLessons.length}</span>
                 </div>
                 <ProgressBar value={progressPercent} />
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="space-y-1">
-                {MODULE_LESSONS.map((moduleLesson, index) => {
-                  const isCurrent = moduleLesson.id === id;
-                  const completed = moduleLesson.isCompleted || (isCurrent && isCompleted);
-                  
-                  return (
-                    <button
-                      key={moduleLesson.id}
-                      onClick={() => navigate(`/app/lessons/${moduleLesson.id}`)}
-                      className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
-                        isCurrent
-                          ? 'bg-primary/10 text-primary'
-                          : 'hover:bg-muted'
-                      }`}
-                    >
-                      <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                        completed
-                          ? 'bg-accent text-accent-foreground'
-                          : isCurrent
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-muted-foreground'
-                      }`}>
-                        {completed ? (
-                          <CheckCircle className="w-4 h-4" />
-                        ) : (
-                          index + 1
-                        )}
-                      </div>
-                      <span className={`text-sm truncate ${
-                        isCurrent ? 'font-medium' : ''
-                      }`}>
-                        {moduleLesson.title}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              {isLoadingModuleLessons ? (
+                <div className="space-y-2">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-12 w-full" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {moduleLessons.map((moduleLesson, index) => {
+                    const isCurrent = moduleLesson.id === id;
+                    
+                    return (
+                      <button
+                        key={moduleLesson.id}
+                        onClick={() => navigate(`/app/lessons/${moduleLesson.id}`)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
+                          isCurrent
+                            ? 'bg-primary/10 text-primary'
+                            : 'hover:bg-muted'
+                        }`}
+                      >
+                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                          moduleLesson.is_completed
+                            ? 'bg-accent text-accent-foreground'
+                            : isCurrent
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {moduleLesson.is_completed ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : (
+                            index + 1
+                          )}
+                        </div>
+                        <span className={`text-sm truncate ${
+                          isCurrent ? 'font-medium' : ''
+                        }`}>
+                          {moduleLesson.title}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Homework Card */}
-          {lesson.homeworkUrl && (
+          {lesson.has_homework && (
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
