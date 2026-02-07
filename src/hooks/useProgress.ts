@@ -40,6 +40,8 @@ export function useToggleLessonProgress() {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       queryClient.invalidateQueries({ queryKey: ['course'] });
+      queryClient.invalidateQueries({ queryKey: ['lesson'] });
+      queryClient.invalidateQueries({ queryKey: ['module-lessons'] });
     },
   });
 }
