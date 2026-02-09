@@ -55,6 +55,11 @@ export default function LessonDetail() {
         title: newCompleted ? t.courses.completed : t.courses.inProgress,
         description: `"${lesson.title}" ${newCompleted ? t.lessons.markComplete.toLowerCase() : ''}`,
       });
+      
+      // Auto-navigate to next lesson after marking complete
+      if (newCompleted && nextLesson) {
+        setTimeout(() => navigate(`/app/lessons/${nextLesson.id}`), 800);
+      }
     } catch (error) {
       toast({
         title: t.common.error,
