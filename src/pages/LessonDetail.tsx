@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { VideoPlayer } from '@/components/video/VideoPlayer';
+import { HomeworkSection } from '@/components/homework/HomeworkSection';
 import { useToast } from '@/hooks/use-toast';
 import { useLesson, useModuleLessons } from '@/hooks/useLesson';
 import { useToggleLessonProgress } from '@/hooks/useProgress';
@@ -70,11 +71,14 @@ export default function LessonDetail() {
   };
 
   const handleDownloadHomework = () => {
-    // In production, this would trigger actual download from storage
-    toast({
-      title: t.lessons.downloadHomework,
-      description: 'Файл жүктелуде...',
-    });
+    if (lesson?.homework_attachment_url) {
+      window.open(lesson.homework_attachment_url, '_blank');
+    } else {
+      toast({
+        title: t.lessons.downloadHomework,
+        description: 'Файл жүктелуде...',
+      });
+    }
   };
 
   // Loading state
@@ -282,29 +286,12 @@ export default function LessonDetail() {
             </CardContent>
           </Card>
 
-          {/* Homework Card */}
           {lesson.has_homework && (
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Үй тапсырмасы
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Сабақты аяқтағаннан кейін тапсырманы орындаңыз.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={handleDownloadHomework}
-                  className="w-full gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  {t.lessons.downloadHomework}
-                </Button>
-              </CardContent>
-            </Card>
+            <HomeworkSection
+              lessonId={lesson.id}
+              homeworkInstructions={lesson.homework_instructions}
+              homeworkAttachmentUrl={lesson.homework_attachment_url}
+            />
           )}
         </div>
       </div>

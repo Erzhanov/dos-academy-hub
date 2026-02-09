@@ -41,6 +41,8 @@ export function LessonDialog({ open, onOpenChange, lesson }: LessonDialogProps) 
   const [videoUrl, setVideoUrl] = useState('');
   const [duration, setDuration] = useState('');
   const [hasHomework, setHasHomework] = useState(false);
+  const [homeworkInstructions, setHomeworkInstructions] = useState('');
+  const [homeworkAttachmentUrl, setHomeworkAttachmentUrl] = useState('');
   const [orderIndex, setOrderIndex] = useState<number>(1);
   
   const isEditing = !!lesson;
@@ -54,6 +56,8 @@ export function LessonDialog({ open, onOpenChange, lesson }: LessonDialogProps) 
       setVideoUrl(lesson.video_url || '');
       setDuration(lesson.duration || '');
       setHasHomework(lesson.has_homework);
+      setHomeworkInstructions(lesson.homework_instructions || '');
+      setHomeworkAttachmentUrl(lesson.homework_attachment_url || '');
       setOrderIndex(lesson.order_index);
     } else {
       setTitle('');
@@ -62,6 +66,8 @@ export function LessonDialog({ open, onOpenChange, lesson }: LessonDialogProps) 
       setVideoUrl('');
       setDuration('');
       setHasHomework(false);
+      setHomeworkInstructions('');
+      setHomeworkAttachmentUrl('');
       setOrderIndex(1);
     }
   }, [lesson, open]);
@@ -81,6 +87,8 @@ export function LessonDialog({ open, onOpenChange, lesson }: LessonDialogProps) 
       video_url: videoUrl || null,
       duration: duration || null,
       has_homework: hasHomework,
+      homework_instructions: hasHomework ? (homeworkInstructions || null) : null,
+      homework_attachment_url: hasHomework ? (homeworkAttachmentUrl || null) : null,
       order_index: orderIndex,
     };
     
@@ -203,6 +211,30 @@ export function LessonDialog({ open, onOpenChange, lesson }: LessonDialogProps) 
             />
             <Label htmlFor="homework">Has Homework</Label>
           </div>
+
+          {hasHomework && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="homeworkInstructions">Homework Instructions</Label>
+                <Textarea
+                  id="homeworkInstructions"
+                  value={homeworkInstructions}
+                  onChange={(e) => setHomeworkInstructions(e.target.value)}
+                  placeholder="Тапсырманың нұсқаулықтарын жазыңыз..."
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="homeworkAttachment">Homework Attachment URL</Label>
+                <Input
+                  id="homeworkAttachment"
+                  value={homeworkAttachmentUrl}
+                  onChange={(e) => setHomeworkAttachmentUrl(e.target.value)}
+                  placeholder="https://drive.google.com/..."
+                />
+              </div>
+            </>
+          )}
           
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

@@ -9,6 +9,8 @@ export interface LessonWithModule {
   video_url: string | null;
   duration: string | null;
   has_homework: boolean;
+  homework_instructions: string | null;
+  homework_attachment_url: string | null;
   order_index: number;
   module_id: string;
   module_title: string;
@@ -44,6 +46,8 @@ export function useLesson(lessonId: string | undefined) {
           video_url,
           duration,
           has_homework,
+          homework_instructions,
+          homework_attachment_url,
           order_index,
           module_id,
           modules!inner (
@@ -85,6 +89,8 @@ export function useLesson(lessonId: string | undefined) {
         video_url: lesson.video_url,
         duration: lesson.duration,
         has_homework: lesson.has_homework,
+        homework_instructions: lesson.homework_instructions,
+        homework_attachment_url: lesson.homework_attachment_url,
         order_index: lesson.order_index,
         module_id: module.id,
         module_title: module.title,
