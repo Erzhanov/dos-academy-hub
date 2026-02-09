@@ -111,6 +111,47 @@ export type Database = {
           },
         ]
       }
+      homework_submissions: {
+        Row: {
+          created_at: string
+          id: string
+          lesson_id: string
+          notes: string | null
+          status: string
+          submission_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lesson_id: string
+          notes?: string | null
+          status?: string
+          submission_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          notes?: string | null
+          status?: string
+          submission_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "homework_submissions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_progress: {
         Row: {
           completed: boolean
@@ -152,6 +193,8 @@ export type Database = {
           description: string | null
           duration: string | null
           has_homework: boolean
+          homework_attachment_url: string | null
+          homework_instructions: string | null
           id: string
           module_id: string
           order_index: number
@@ -163,6 +206,8 @@ export type Database = {
           description?: string | null
           duration?: string | null
           has_homework?: boolean
+          homework_attachment_url?: string | null
+          homework_instructions?: string | null
           id?: string
           module_id: string
           order_index?: number
@@ -174,6 +219,8 @@ export type Database = {
           description?: string | null
           duration?: string | null
           has_homework?: boolean
+          homework_attachment_url?: string | null
+          homework_instructions?: string | null
           id?: string
           module_id?: string
           order_index?: number
