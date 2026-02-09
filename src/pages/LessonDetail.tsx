@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Skeleton } from '@/components/ui/skeleton';
+import { VideoPlayer } from '@/components/video/VideoPlayer';
 import { useToast } from '@/hooks/use-toast';
 import { useLesson, useModuleLessons } from '@/hooks/useLesson';
 import { useToggleLessonProgress } from '@/hooks/useProgress';
@@ -18,7 +18,6 @@ import {
   Clock,
   BookOpen,
   FileText,
-  Lock,
   Loader2
 } from 'lucide-react';
 
@@ -121,24 +120,11 @@ export default function LessonDetail() {
         <div className="lg:col-span-2 space-y-6">
           {/* Video Player */}
           <Card className="overflow-hidden">
-            <AspectRatio ratio={16 / 9} className="bg-muted">
-              {lesson.video_url ? (
-                <iframe
-                  src={lesson.video_url}
-                  title={lesson.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-muted">
-                  <div className="text-center">
-                    <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">Бейне қолжетімсіз</p>
-                  </div>
-                </div>
-              )}
-            </AspectRatio>
+            <VideoPlayer 
+              url={lesson.video_url} 
+              title={lesson.title}
+              className="bg-muted"
+            />
           </Card>
 
           {/* Lesson Info */}
