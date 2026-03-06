@@ -10,6 +10,7 @@ import {
   Users,
   FolderOpen,
   LayoutDashboard,
+  FileText,
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
