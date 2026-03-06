@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useHomeworkSubmission, useSubmitHomework } from '@/hooks/useHomework';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Download, Send, Loader2, CheckCircle, Clock, ExternalLink } from 'lucide-react';
+import { FileText, Download, Send, Loader2, CheckCircle, Clock, ExternalLink, XCircle, MessageSquare } from 'lucide-react';
 
 interface HomeworkSectionProps {
   lessonId: string;
