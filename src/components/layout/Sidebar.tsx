@@ -36,6 +36,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: LayoutDashboard, label: t.admin.dashboard, path: '/admin' },
     { icon: Users, label: t.admin.users, path: '/admin/users' },
     { icon: FolderOpen, label: t.admin.content, path: '/admin/content' },
+    { icon: FileText, label: 'Тапсырмалар', path: '/admin/homework' },
     { icon: BarChart3, label: t.admin.statistics, path: '/admin/stats' },
   ];
 

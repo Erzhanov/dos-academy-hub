@@ -54,6 +54,7 @@ const App = () => (
                   <Route index element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="content" element={<AdminContent />} />
+                  <Route path="homework" element={<AdminHomework />} />
                   <Route path="stats" element={<AdminDashboard />} />
                 </Route>
                 
