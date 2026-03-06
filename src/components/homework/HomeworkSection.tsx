@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useHomeworkSubmission, useSubmitHomework } from '@/hooks/useHomework';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Download, Send, Loader2, CheckCircle, Clock, ExternalLink } from 'lucide-react';
+import { FileText, Download, Send, Loader2, CheckCircle, Clock, ExternalLink, XCircle, MessageSquare } from 'lucide-react';
 
 interface HomeworkSectionProps {
   lessonId: string;
@@ -111,6 +112,22 @@ export function HomeworkSection({ lessonId, homeworkInstructions, homeworkAttach
             )}
             {submission.notes && (
               <p className="text-sm text-muted-foreground">{submission.notes}</p>
+            )}
+            {/* Admin feedback */}
+            {submission.feedback && (
+              <div className="p-2.5 rounded-md bg-primary/5 border border-primary/10 text-sm">
+                <div className="flex items-center gap-1.5 text-primary font-medium mb-1">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Мұғалімнің пікірі
+                </div>
+                <p className="text-muted-foreground">{submission.feedback}</p>
+              </div>
+            )}
+            {submission.status === 'rejected' && (
+              <p className="text-sm text-destructive flex items-center gap-1.5">
+                <XCircle className="w-3.5 h-3.5" />
+                Тапсырманы қайта жіберіңіз
+              </p>
             )}
             <Button variant="outline" size="sm" onClick={handleEdit}>
               Қайта жіберу

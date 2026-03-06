@@ -19,6 +19,7 @@ import CourseDetail from "./pages/CourseDetail";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminContent from "./pages/admin/AdminContent";
+import AdminHomework from "./pages/admin/AdminHomework";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ const App = () => (
                   <Route index element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="content" element={<AdminContent />} />
+                  <Route path="homework" element={<AdminHomework />} />
                   <Route path="stats" element={<AdminDashboard />} />
                 </Route>
                 

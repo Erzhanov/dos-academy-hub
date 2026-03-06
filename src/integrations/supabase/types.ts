@@ -113,31 +113,49 @@ export type Database = {
       }
       homework_submissions: {
         Row: {
+          attempt_no: number | null
           created_at: string
+          feedback: string | null
           id: string
+          is_latest: boolean | null
           lesson_id: string
           notes: string | null
+          previous_submission_id: string | null
+          reviewed_at: string | null
           status: string
+          submission_file_path: string | null
           submission_url: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          attempt_no?: number | null
           created_at?: string
+          feedback?: string | null
           id?: string
+          is_latest?: boolean | null
           lesson_id: string
           notes?: string | null
+          previous_submission_id?: string | null
+          reviewed_at?: string | null
           status?: string
+          submission_file_path?: string | null
           submission_url?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          attempt_no?: number | null
           created_at?: string
+          feedback?: string | null
           id?: string
+          is_latest?: boolean | null
           lesson_id?: string
           notes?: string | null
+          previous_submission_id?: string | null
+          reviewed_at?: string | null
           status?: string
+          submission_file_path?: string | null
           submission_url?: string | null
           updated_at?: string
           user_id?: string
@@ -272,27 +290,69 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          birth_date: string | null
           created_at: string
           full_name: string | null
+          guardian_full_name: string | null
+          guardian_phone: string | null
           id: string
+          phone: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
           full_name?: string | null
+          guardian_full_name?: string | null
+          guardian_phone?: string | null
           id?: string
+          phone?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
           full_name?: string | null
+          guardian_full_name?: string | null
+          guardian_phone?: string | null
           id?: string
+          phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_read: boolean
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
         }
         Relationships: []
       }
