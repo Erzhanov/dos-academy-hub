@@ -113,6 +113,22 @@ export function HomeworkSection({ lessonId, homeworkInstructions, homeworkAttach
             {submission.notes && (
               <p className="text-sm text-muted-foreground">{submission.notes}</p>
             )}
+            {/* Admin feedback */}
+            {submission.feedback && (
+              <div className="p-2.5 rounded-md bg-primary/5 border border-primary/10 text-sm">
+                <div className="flex items-center gap-1.5 text-primary font-medium mb-1">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Мұғалімнің пікірі
+                </div>
+                <p className="text-muted-foreground">{submission.feedback}</p>
+              </div>
+            )}
+            {submission.status === 'rejected' && (
+              <p className="text-sm text-destructive flex items-center gap-1.5">
+                <XCircle className="w-3.5 h-3.5" />
+                Тапсырманы қайта жіберіңіз
+              </p>
+            )}
             <Button variant="outline" size="sm" onClick={handleEdit}>
               Қайта жіберу
             </Button>
