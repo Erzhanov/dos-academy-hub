@@ -115,11 +115,13 @@ export type Database = {
         Row: {
           attempt_no: number | null
           created_at: string
+          feedback: string | null
           id: string
           is_latest: boolean | null
           lesson_id: string
           notes: string | null
           previous_submission_id: string | null
+          reviewed_at: string | null
           status: string
           submission_file_path: string | null
           submission_url: string | null
@@ -129,11 +131,13 @@ export type Database = {
         Insert: {
           attempt_no?: number | null
           created_at?: string
+          feedback?: string | null
           id?: string
           is_latest?: boolean | null
           lesson_id: string
           notes?: string | null
           previous_submission_id?: string | null
+          reviewed_at?: string | null
           status?: string
           submission_file_path?: string | null
           submission_url?: string | null
@@ -143,11 +147,13 @@ export type Database = {
         Update: {
           attempt_no?: number | null
           created_at?: string
+          feedback?: string | null
           id?: string
           is_latest?: boolean | null
           lesson_id?: string
           notes?: string | null
           previous_submission_id?: string | null
+          reviewed_at?: string | null
           status?: string
           submission_file_path?: string | null
           submission_url?: string | null
