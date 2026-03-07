@@ -1,0 +1,1 @@
+ALTER TABLE public.homework_submissions ADD COLUMN score integer DEFAULT NULL;
