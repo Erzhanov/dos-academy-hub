@@ -20,6 +20,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminHomework from "./pages/admin/AdminHomework";
+import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
+import AdminStats from "./pages/admin/AdminStats";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
