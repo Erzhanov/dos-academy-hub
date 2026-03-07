@@ -93,11 +93,16 @@ export function HomeworkSection({ lessonId, homeworkInstructions, homeworkAttach
           <div className="space-y-3 p-3 rounded-lg border">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Сіздің жауабыңыз</span>
-              <Badge variant={statusMap[submission.status]?.variant || 'outline'}>
-                {submission.status === 'submitted' && <Clock className="w-3 h-3 mr-1" />}
-                {submission.status === 'approved' && <CheckCircle className="w-3 h-3 mr-1" />}
-                {statusMap[submission.status]?.label || submission.status}
-              </Badge>
+              <div className="flex items-center gap-2">
+                {submission.score != null && (
+                  <Badge variant="outline" className="font-mono">{submission.score}/100</Badge>
+                )}
+                <Badge variant={statusMap[submission.status]?.variant || 'outline'}>
+                  {submission.status === 'submitted' && <Clock className="w-3 h-3 mr-1" />}
+                  {submission.status === 'approved' && <CheckCircle className="w-3 h-3 mr-1" />}
+                  {statusMap[submission.status]?.label || submission.status}
+                </Badge>
+              </div>
             </div>
             {submission.submission_url && (
               <a
