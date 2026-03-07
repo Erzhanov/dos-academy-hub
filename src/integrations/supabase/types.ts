@@ -122,6 +122,7 @@ export type Database = {
           notes: string | null
           previous_submission_id: string | null
           reviewed_at: string | null
+          score: number | null
           status: string
           submission_file_path: string | null
           submission_url: string | null
@@ -138,6 +139,7 @@ export type Database = {
           notes?: string | null
           previous_submission_id?: string | null
           reviewed_at?: string | null
+          score?: number | null
           status?: string
           submission_file_path?: string | null
           submission_url?: string | null
@@ -154,6 +156,7 @@ export type Database = {
           notes?: string | null
           previous_submission_id?: string | null
           reviewed_at?: string | null
+          score?: number | null
           status?: string
           submission_file_path?: string | null
           submission_url?: string | null
