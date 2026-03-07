@@ -57,7 +57,8 @@ const App = () => (
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="content" element={<AdminContent />} />
                   <Route path="homework" element={<AdminHomework />} />
-                  <Route path="stats" element={<AdminDashboard />} />
+                  <Route path="students/:userId" element={<AdminStudentDetail />} />
+                  <Route path="stats" element={<AdminStats />} />
                 </Route>
                 
                 {/* Catch-all */}
