@@ -277,10 +277,29 @@ export function useReviewHomework() {
           reviewed_at: new Date().toISOString(),
         })
         .eq('id', submissionId)
-        .select()
+        .select(`
+          *,
+          lessons!homework_submissions_lesson_id_fkey (title)
+        `)
         .single();
 
       if (error) throw error;
+
+      // Send in-app notification to the student
+      const lessonTitle = (data as any).lessons?.title || 'Сабақ';
+      const isApproved = status === 'approved';
+      const scoreText = score != null ? ` (${score}/100)` : '';
+
+      await supabase.from('notifications').insert({
+        user_id: data.user_id,
+        title: isApproved ? 'Тапсырма қабылданды ✅' : 'Тапсырма қайтарылды ❌',
+        message: isApproved
+          ? `"${lessonTitle}" сабағының тапсырмасы қабылданды${scoreText}${feedback ? '. Пікір: ' + feedback : ''}`
+          : `"${lessonTitle}" сабағының тапсырмасы қайтарылды${scoreText}${feedback ? '. Пікір: ' + feedback : ''}`,
+        type: isApproved ? 'success' : 'warning',
+        link: `/app/courses`,
+      });
+
       return data;
     },
     onSuccess: () => {
