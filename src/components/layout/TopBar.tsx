@@ -1,6 +1,8 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useNavigate } from 'react-router-dom';
 import { 
   Menu, 
   Search, 
@@ -8,7 +10,8 @@ import {
   Moon, 
   LogOut,
   User,
-  ChevronDown
+  ChevronDown,
+  Bell
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
