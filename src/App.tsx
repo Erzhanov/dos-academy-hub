@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Progress from "./pages/Progress";
+import Notifications from "./pages/Notifications";
 import LessonDetail from "./pages/LessonDetail";
 import CourseDetail from "./pages/CourseDetail";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -47,6 +48,7 @@ const App = () => (
                   <Route path="courses/:id" element={<CourseDetail />} />
                   <Route path="progress" element={<Progress />} />
                   <Route path="lessons" element={<Courses />} />
+                  <Route path="notifications" element={<Notifications />} />
                   <Route path="lessons/:id" element={<LessonDetail />} />
                   <Route path="settings" element={<Dashboard />} />
                 </Route>

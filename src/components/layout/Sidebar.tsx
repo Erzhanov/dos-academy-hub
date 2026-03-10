@@ -11,6 +11,7 @@ import {
   FolderOpen,
   LayoutDashboard,
   FileText,
+  Bell,
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,7 +22,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isAdmin } = useAuth();
   const location = useLocation();
 
@@ -30,6 +31,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: BookOpen, label: t.nav.myCourses, path: '/app/courses' },
     { icon: BarChart3, label: t.nav.progress, path: '/app/progress' },
     { icon: GraduationCap, label: t.nav.lessons, path: '/app/lessons' },
+    { icon: Bell, label: language === 'kk' ? 'Хабарландырулар' : 'Уведомления', path: '/app/notifications' },
   ];
 
   const adminNavItems = [

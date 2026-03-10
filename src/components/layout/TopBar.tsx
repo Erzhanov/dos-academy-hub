@@ -1,6 +1,8 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useNavigate } from 'react-router-dom';
 import { 
   Menu, 
   Search, 
@@ -8,7 +10,8 @@ import {
   Moon, 
   LogOut,
   User,
-  ChevronDown
+  ChevronDown,
+  Bell
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +32,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   const { t, language, setLanguage } = useLanguage();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { unreadCount } = useNotifications();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-card/95 backdrop-blur border-b border-border">
@@ -79,6 +84,21 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Notifications */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate('/app/notifications')}
+            className="h-9 w-9 relative"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </Button>
 
           {/* Theme Toggle */}
           <Button 
