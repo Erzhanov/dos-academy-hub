@@ -85,6 +85,21 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Notifications */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate('/app/notifications')}
+            className="h-9 w-9 relative"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </Button>
+
           {/* Theme Toggle */}
           <Button 
             variant="ghost" 
