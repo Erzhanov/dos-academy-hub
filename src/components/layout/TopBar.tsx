@@ -32,6 +32,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   const { t, language, setLanguage } = useLanguage();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { unreadCount } = useNotifications();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-card/95 backdrop-blur border-b border-border">
