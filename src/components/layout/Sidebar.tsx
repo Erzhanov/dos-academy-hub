@@ -22,7 +22,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isAdmin } = useAuth();
   const location = useLocation();
 
