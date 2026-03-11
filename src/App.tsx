@@ -24,6 +24,10 @@ import AdminHomework from "./pages/admin/AdminHomework";
 import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
 import AdminStats from "./pages/admin/AdminStats";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
+import Certificates from "./pages/Certificates";
+import Messages from "./pages/Messages";
+import SearchPage from "./pages/SearchPage";
 
 const queryClient = new QueryClient();
 
