@@ -54,7 +54,10 @@ const App = () => (
                   <Route path="lessons" element={<Courses />} />
                   <Route path="notifications" element={<Notifications />} />
                   <Route path="lessons/:id" element={<LessonDetail />} />
-                  <Route path="settings" element={<Dashboard />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="certificates" element={<Certificates />} />
+                  <Route path="messages" element={<Messages />} />
+                  <Route path="search" element={<SearchPage />} />
                 </Route>
                 
                 {/* Admin routes */}

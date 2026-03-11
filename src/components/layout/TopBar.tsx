@@ -47,12 +47,14 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <Menu className="w-5 h-5 text-foreground" />
           </button>
           
-          <div className="hidden sm:flex items-center relative">
+          <div className="hidden sm:flex items-center relative cursor-pointer" onClick={() => navigate('/app/search')}>
             <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder={t.nav.search}
-              className="pl-9 w-64 bg-secondary border-0 focus-visible:ring-1"
+              className="pl-9 w-64 bg-secondary border-0 focus-visible:ring-1 cursor-pointer"
+              readOnly
+              onClick={() => navigate('/app/search')}
             />
           </div>
         </div>

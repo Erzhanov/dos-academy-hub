@@ -34,7 +34,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { icon: BookOpen, label: t.nav.myCourses, path: '/app/courses' },
     { icon: BarChart3, label: t.nav.progress, path: '/app/progress' },
     { icon: GraduationCap, label: t.nav.lessons, path: '/app/lessons' },
+    { icon: Search, label: language === 'kk' ? 'Іздеу' : 'Поиск', path: '/app/search' },
     { icon: Bell, label: language === 'kk' ? 'Хабарландырулар' : 'Уведомления', path: '/app/notifications' },
+    { icon: MessageSquare, label: language === 'kk' ? 'Хабарламалар' : 'Сообщения', path: '/app/messages' },
+    { icon: Award, label: language === 'kk' ? 'Сертификаттар' : 'Сертификаты', path: '/app/certificates' },
   ];
 
   const adminNavItems = [
