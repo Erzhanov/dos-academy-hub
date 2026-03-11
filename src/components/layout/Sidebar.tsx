@@ -12,7 +12,10 @@ import {
   LayoutDashboard,
   FileText,
   Bell,
-  X
+  X,
+  Award,
+  MessageSquare,
+  Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
