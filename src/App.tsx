@@ -24,6 +24,10 @@ import AdminHomework from "./pages/admin/AdminHomework";
 import AdminStudentDetail from "./pages/admin/AdminStudentDetail";
 import AdminStats from "./pages/admin/AdminStats";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
+import Certificates from "./pages/Certificates";
+import Messages from "./pages/Messages";
+import SearchPage from "./pages/SearchPage";
 
 const queryClient = new QueryClient();
 
@@ -50,7 +54,10 @@ const App = () => (
                   <Route path="lessons" element={<Courses />} />
                   <Route path="notifications" element={<Notifications />} />
                   <Route path="lessons/:id" element={<LessonDetail />} />
-                  <Route path="settings" element={<Dashboard />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="certificates" element={<Certificates />} />
+                  <Route path="messages" element={<Messages />} />
+                  <Route path="search" element={<SearchPage />} />
                 </Route>
                 
                 {/* Admin routes */}
