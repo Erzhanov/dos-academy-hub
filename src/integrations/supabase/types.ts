@@ -14,6 +14,178 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          metadata: Json
+          role: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          role: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          role?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_chat_sessions: {
+        Row: {
+          archived: boolean
+          created_at: string
+          id: string
+          last_message_at: string
+          lesson_id: string | null
+          scope: string
+          summary: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          lesson_id?: string | null
+          scope?: string
+          summary?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          lesson_id?: string | null
+          scope?: string
+          summary?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_sessions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_tutor_usage_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          lesson_id: string | null
+          model: string | null
+          prompt_chars: number
+          response_chars: number
+          scope: string
+          session_id: string | null
+          success: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lesson_id?: string | null
+          model?: string | null
+          prompt_chars?: number
+          response_chars?: number
+          scope?: string
+          session_id?: string | null
+          success?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lesson_id?: string | null
+          model?: string | null
+          prompt_chars?: number
+          response_chars?: number
+          scope?: string
+          session_id?: string | null
+          success?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_tutor_usage_logs_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_tutor_usage_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          details: Json
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          details?: Json
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          details?: Json
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -45,7 +217,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          certificate_number: string
+          certificate_number?: string
           course_id: string
           id?: string
           issued_at?: string | null
@@ -177,14 +349,17 @@ export type Database = {
       }
       homework_submissions: {
         Row: {
+          assignee_id: string | null
           attempt_no: number | null
           created_at: string
+          deadline: string | null
           feedback: string | null
           id: string
           is_latest: boolean | null
           lesson_id: string
           notes: string | null
           previous_submission_id: string | null
+          priority: string
           reviewed_at: string | null
           score: number | null
           status: string
@@ -194,14 +369,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assignee_id?: string | null
           attempt_no?: number | null
           created_at?: string
+          deadline?: string | null
           feedback?: string | null
           id?: string
           is_latest?: boolean | null
           lesson_id: string
           notes?: string | null
           previous_submission_id?: string | null
+          priority?: string
           reviewed_at?: string | null
           score?: number | null
           status?: string
@@ -211,14 +389,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assignee_id?: string | null
           attempt_no?: number | null
           created_at?: string
+          deadline?: string | null
           feedback?: string | null
           id?: string
           is_latest?: boolean | null
           lesson_id?: string
           notes?: string | null
           previous_submission_id?: string | null
+          priority?: string
           reviewed_at?: string | null
           score?: number | null
           status?: string
@@ -234,6 +415,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "lessons"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "homework_submissions_previous_submission_id_fkey"
+            columns: ["previous_submission_id"]
+            isOneToOne: false
+            referencedRelation: "homework_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "homework_submissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -425,15 +620,60 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_settings: {
+        Row: {
+          allow_new_registrations: boolean
+          created_at: string
+          homepage_announcement: string | null
+          id: number
+          logo_url: string | null
+          maintenance_mode: boolean
+          site_name: string
+          support_email: string | null
+          timezone: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          allow_new_registrations?: boolean
+          created_at?: string
+          homepage_announcement?: string | null
+          id?: number
+          logo_url?: string | null
+          maintenance_mode?: boolean
+          site_name?: string
+          support_email?: string | null
+          timezone?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          allow_new_registrations?: boolean
+          created_at?: string
+          homepage_announcement?: string | null
+          id?: number
+          logo_url?: string | null
+          maintenance_mode?: boolean
+          site_name?: string
+          support_email?: string | null
+          timezone?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           birth_date: string | null
           created_at: string
+          deleted_at: string | null
+          email: string | null
           full_name: string | null
           guardian_full_name: string | null
           guardian_phone: string | null
           id: string
+          is_active: boolean
           phone: string | null
           updated_at: string
           user_id: string
@@ -442,10 +682,13 @@ export type Database = {
           avatar_url?: string | null
           birth_date?: string | null
           created_at?: string
+          deleted_at?: string | null
+          email?: string | null
           full_name?: string | null
           guardian_full_name?: string | null
           guardian_phone?: string | null
           id?: string
+          is_active?: boolean
           phone?: string | null
           updated_at?: string
           user_id: string
@@ -454,13 +697,100 @@ export type Database = {
           avatar_url?: string | null
           birth_date?: string | null
           created_at?: string
+          deleted_at?: string | null
+          email?: string | null
           full_name?: string | null
           guardian_full_name?: string | null
           guardian_phone?: string | null
           id?: string
+          is_active?: boolean
           phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          admin_response: string | null
+          created_at: string
+          description: string
+          id: string
+          priority: string
+          resolved_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_response?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          priority?: string
+          resolved_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_response?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: string
+          resolved_at?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          invited_name: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          invited_name?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          invited_name?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          token?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -520,7 +850,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_user_access: { Args: never; Returns: undefined }
       generate_certificate_number: { Args: never; Returns: string }
+      get_invite_public: {
+        Args: { p_token: string }
+        Returns: {
+          email: string
+          expires_at: string
+          id: string
+          invited_name: string
+          role: Database["public"]["Enums"]["app_role"]
+          status: string
+        }[]
+      }
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -530,7 +879,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role:
+        | "admin"
+        | "user"
+        | "content_manager"
+        | "homework_reviewer"
+        | "support"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -658,7 +1012,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: [
+        "admin",
+        "user",
+        "content_manager",
+        "homework_reviewer",
+        "support",
+      ],
     },
   },
 } as const
